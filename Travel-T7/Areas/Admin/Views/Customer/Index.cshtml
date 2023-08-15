@@ -1,0 +1,125 @@
+﻿@model PagedList.PagedList<Travel_T7.Models.EF.KhachHang>
+@using PagedList;
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Thông tin khách hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@section naviheader{
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/Place" class="nav-link">@ViewBag.Title</a>
+        </li>
+    </ul>
+}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Thông tin khách hàng</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">@ViewBag.Title</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">@ViewBag.Title</h3>
+
+            <div class="card-tools">
+                <a href="/Admin/Customer/Add" class="btn btn-primary">Them moi</a>
+                <a href="#" class="btn btn-danger" id="BtnDeleteAll">Xoa</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>TelePhone</th>
+                        <th>Email<th>
+                        <th>Number</th>
+                        <th>Destination</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = ((ViewBag.page - 1) * ViewBag.pageSize) + 1;
+                        foreach (var item in Model)
+                        {
+                            <tr id="trow_@item.Id">
+
+                                <td>@i</td>
+                                <td>@item.FirstName</td>
+                                <td>@item.LastName</td>
+                                <td>@item.Telephone</td>
+                                <td>@item.Email</td>
+                                <td>@item.Number</td>
+                                <td>@item.Destination</td>
+
+                                <td>
+                                    <a href="~/Admin/Customer/Edit/@item.Id" class="btn btn-sm btn-primary">Sửa</a>
+                                    <a data-id="@item.Id" class="btn btn-sm btn-danger btnDelete">Xóa</a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">Không có khách hàng nào !</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+            Footer
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+</section>
+@section scripts{
+    <script>
+           $('body').on('click', '.btnDelete', function () {
+               var id = $(this).data('id');
+               var conf = confirm('ban co muon xoa khong');
+               if (conf === true) {
+                   $.ajax({
+                       url: '/Admin/Place/Delete',
+                       type: 'POST',
+                       data: { id: id },
+                       success: function (rs) {
+                           if (rs.success) {
+                               $('trow_' + id).remove();
+                               location.reload();
+                           }
+                       }
+                   });
+               }
+           });
+    </script>
+}
